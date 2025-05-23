@@ -32,7 +32,8 @@ This function should only modify configuration layer settings."
 
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(javascript
+   '(html
+     javascript
      protobuf
      toml
      ;; ----------------------------------------------------------------
@@ -50,6 +51,8 @@ This function should only modify configuration layer settings."
      multiple-cursors
      evil-commentary
      org
+     (llm-client :variables
+                 llm-client-enable-gptel t)
      (python :variables
              python-backend 'lsp
              python-lsp-server 'pyright
@@ -68,11 +71,11 @@ This function should only modify configuration layer settings."
      python
      docker
      yaml
-     (go :variables 
-	go-backend 'lsp
-	go-tab-width 4
-	go-format-before-save t
-	go-use-golangci-lint t)
+     (go :variables
+         go-backend 'lsp
+         go-tab-width 4
+         go-format-before-save t
+         go-use-golangci-lint t)
      treemacs)
 
 
@@ -595,10 +598,15 @@ This function is called at the very end of Spacemacs startup, after layer
 configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
+  (setq
+   gptel-model 'gemini-2.0-flash
+   gptel-backend (gptel-make-gemini "Gemini"
+                   :key (getenv "GEMINI_API_KEY")
+                   :stream t))
+
   (defvar @-dotenv-file-name ".env"
     "The name of the .env file."
     )
-
   (defun @-find-env-file ()
     "Find the closest .env file in the directory hierarchy."
 
@@ -644,7 +652,59 @@ This function is called at the very end of Spacemacs initialization."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(add-node-modules-path counsel-gtags counsel swiper ivy ggtags impatient-mode import-js grizzl js-doc js2-refactor multiple-cursors livid-mode nodejs-repl npm-mode prettier-js skewer-mode js2-mode simple-httpd tern web-beautify protobuf-mode toml-mode yasnippet-snippets yapfify yaml-mode ws-butler writeroom-mode winum which-key volatile-highlights vim-powerline vi-tilde-fringe uuidgen unfill undo-tree treemacs-projectile treemacs-persp treemacs-magit treemacs-icons-dired treemacs-evil toc-org term-cursor symon symbol-overlay string-inflection string-edit-at-point sphinx-doc spacemacs-whitespace-cleanup spacemacs-purpose-popwin spaceline space-doc smeargle restart-emacs request rainbow-delimiters quickrun pytest pylookup pyenv-mode pydoc py-isort popwin poetry pippel pipenv pip-requirements pcre2el password-generator paradox overseer orgit-forge org-superstar org-rich-yank org-projectile org-present org-pomodoro org-mime org-download org-contrib org-cliplink open-junk-file nose nameless mwim multi-line markdown-toc macrostep lsp-ui lsp-origami lorem-ipsum live-py-mode link-hint inspector info+ indent-guide importmagic hybrid-mode hungry-delete htmlize holy-mode hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt helm-xref helm-themes helm-swoop helm-pydoc helm-purpose helm-projectile helm-org-rifle helm-org helm-mode-manager helm-make helm-lsp helm-ls-git helm-git-grep helm-descbinds helm-company helm-comint helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gitignore-templates git-timemachine git-modes git-messenger git-link gh-md flyspell-correct-helm flycheck-pos-tip flycheck-package flycheck-mypy flycheck-elsa flx-ido fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-textobj-line evil-surround evil-org evil-numbers evil-mc evil-matchit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-evilified-state evil-escape evil-easymotion evil-commentary evil-collection evil-cleverparens evil-args evil-anzu eval-sexp-fu emr elisp-slime-nav elisp-demos elisp-def editorconfig dumb-jump drag-stuff dotenv-mode dockerfile-mode docker dired-quick-sort diminish diff-hl devdocs define-word dap-mode cython-mode company-anaconda column-enforce-mode code-cells clean-aindent-mode centered-cursor-mode browse-at-remote blacken auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile all-the-icons aggressive-indent ace-link ace-jump-helm-line)))
+   '(ace-jump-helm-line ace-link add-node-modules-path aggressive-indent
+                        all-the-icons auto-compile auto-dictionary
+                        auto-highlight-symbol auto-yasnippet blacken
+                        browse-at-remote centered-cursor-mode clean-aindent-mode
+                        code-cells column-enforce-mode company-anaconda
+                        company-web counsel counsel-css counsel-gtags
+                        cython-mode dap-mode define-word devdocs diff-hl
+                        diminish dired-quick-sort docker dockerfile-mode
+                        dotenv-mode drag-stuff dumb-jump editorconfig elisp-def
+                        elisp-demos elisp-slime-nav emmet-mode emr eval-sexp-fu
+                        evil-anzu evil-args evil-cleverparens evil-collection
+                        evil-commentary evil-easymotion evil-escape
+                        evil-evilified-state evil-exchange evil-goggles
+                        evil-iedit-state evil-indent-plus evil-lion
+                        evil-lisp-state evil-matchit evil-mc evil-numbers
+                        evil-org evil-surround evil-textobj-line evil-tutor
+                        evil-unimpaired evil-visual-mark-mode evil-visualstar
+                        expand-region eyebrowse fancy-battery flx-ido
+                        flycheck-elsa flycheck-mypy flycheck-package
+                        flycheck-pos-tip flyspell-correct-helm ggtags gh-md
+                        git-link git-messenger git-modes git-timemachine
+                        gitignore-templates gnuplot golden-ratio
+                        google-translate grizzl haml-mode helm-ag
+                        helm-c-yasnippet helm-comint helm-company helm-css-scss
+                        helm-descbinds helm-git-grep helm-ls-git helm-lsp
+                        helm-make helm-mode-manager helm-org helm-org-rifle
+                        helm-projectile helm-purpose helm-pydoc helm-swoop
+                        helm-themes helm-xref hide-comnt highlight-indentation
+                        highlight-numbers highlight-parentheses hl-todo
+                        holy-mode htmlize hungry-delete hybrid-mode
+                        impatient-mode import-js importmagic indent-guide info+
+                        inspector ivy js-doc js2-mode js2-refactor link-hint
+                        live-py-mode livid-mode lorem-ipsum lsp-origami lsp-ui
+                        macrostep markdown-toc multi-line multiple-cursors mwim
+                        nameless nodejs-repl nose npm-mode open-junk-file
+                        org-cliplink org-contrib org-download org-mime
+                        org-pomodoro org-present org-projectile org-rich-yank
+                        org-superstar orgit-forge overseer paradox
+                        password-generator pcre2el pip-requirements pipenv
+                        pippel poetry popwin prettier-js protobuf-mode pug-mode
+                        py-isort pydoc pyenv-mode pylookup pytest quickrun
+                        rainbow-delimiters request restart-emacs sass-mode
+                        scss-mode simple-httpd skewer-mode slim-mode smeargle
+                        space-doc spaceline spacemacs-purpose-popwin
+                        spacemacs-whitespace-cleanup sphinx-doc
+                        string-edit-at-point string-inflection swiper
+                        symbol-overlay symon tagedit term-cursor tern toc-org
+                        toml-mode treemacs-evil treemacs-icons-dired
+                        treemacs-magit treemacs-persp treemacs-projectile
+                        undo-tree unfill uuidgen vi-tilde-fringe vim-powerline
+                        volatile-highlights web-beautify web-completion-data
+                        web-mode which-key winum writeroom-mode ws-butler
+                        yaml-mode yapfify yasnippet-snippets)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
