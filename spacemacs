@@ -33,14 +33,8 @@ This function should only modify configuration layer settings."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(html
-     javascript
      protobuf
      toml
-     ;; ----------------------------------------------------------------
-     ;; Example of useful layers you may want to use right away.
-     ;; Uncomment some layer names and press `SPC f e R' (Vim style) or
-     ;; `M-m f e R' (Emacs style) to install them.
-     ;; ----------------------------------------------------------------
      better-defaults
      (auto-completion :variables auto-completion-enable-help-tooltip t)
      emacs-lisp
@@ -51,16 +45,17 @@ This function should only modify configuration layer settings."
      multiple-cursors
      evil-commentary
      org
+     plantuml
      (llm-client :variables
                  llm-client-enable-gptel t)
      (python :variables
              python-backend 'lsp
              python-lsp-server 'pyright
              python-test-runner 'pytest
-             python-formatter 'black
+             python-formatter 'ruff
              python-format-on-save t
              python-sort-imports-on-save t
-             python-auto-set-local-pyvenv-virtualenv 'on-project-switch)
+             python-auto-set-local-pyvenv-virtualenv 'on-visit)
      (shell :variables
             shell-default-position 'bottom
             shell-default-height 30
@@ -87,7 +82,7 @@ This function should only modify configuration layer settings."
    ;; `dotspacemacs/user-config'. To use a local version of a package, use the
    ;; `:location' property: '(your-package :location "~/path/to/your-package/")
    ;; Also include the dependencies as they will not be resolved automatically.
-   dotspacemacs-additional-packages '(flycheck-mypy)
+   dotspacemacs-additional-packages '(flycheck-mypy exec-path-from-shell)
 
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
@@ -598,12 +593,16 @@ This function is called at the very end of Spacemacs startup, after layer
 configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
+  ;; import PATH (and other vars) from your login shell
+  (when (memq window-system '(mac ns x))
+    (exec-path-from-shell-initialize))
+  ;; GPTEL
   (setq
-   gptel-model 'gemini-2.0-flash
+   gptel-model 'gemini-2.5-flash-preview-05-20
    gptel-backend (gptel-make-gemini "Gemini"
                    :key (getenv "GEMINI_API_KEY")
                    :stream t))
-
+  ;; Load .env files
   (defvar @-dotenv-file-name ".env"
     "The name of the .env file."
     )
